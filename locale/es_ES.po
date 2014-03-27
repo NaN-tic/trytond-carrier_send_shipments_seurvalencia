@@ -2,6 +2,10 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
+msgctxt "view:carrier.api:"
+msgid "Seur"
+msgstr "Seur"
+
 msgctxt "wizard_button:carrier.send.shipments,result,end:"
 msgid "Close"
 msgstr "Cerrar"
