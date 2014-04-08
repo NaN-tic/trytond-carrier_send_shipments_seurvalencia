@@ -91,8 +91,13 @@ class ShipmentOut:
                 #~ data['exp_cde'] = ''
                 data['exp_portes'] = 'F' # F: Facturacion
                 if shipment.carrier_cashondelivery:
+                    if not price_ondelivery:
+                        message = 'Shipment %s not have price and send ' \
+                                'cashondelivery' % (shipment.code)
+                        errors.append(message)
+                        continue
                     data['exp_reembolso'] = 'F' # F: Facturacion
-                    data['exp_valor_reembolso'] = str(price_ondelivery) if price_ondelivery else '0.1'
+                    data['exp_valor_reembolso'] = str(price_ondelivery)
                 else:
                     data['exp_reembolso'] = ' '
                     data['exp_valor_reembolso'] = '0'
