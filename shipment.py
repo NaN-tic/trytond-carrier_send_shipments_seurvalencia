@@ -89,16 +89,19 @@ class ShipmentOut:
                 data['exp_bultos'] = packages
                 #~ data['exp_cambio'] = ''
                 #~ data['exp_cde'] = ''
-                #~ data['exp_portes'] = 'F'
+                data['exp_portes'] = 'F' # F: Facturacion
                 if shipment.carrier_cashondelivery:
                     data['exp_reembolso'] = 'F' # F: Facturacion
+                    data['exp_valor_reembolso'] = str(price_ondelivery) if price_ondelivery else '0.1'
+                else:
+                    data['exp_reembolso'] = ' '
+                    data['exp_valor_reembolso'] = '0'
                 #~ data['exp_seguro'] = ''
                 #~ data['exp_entregar_sabado'] = ''
                 #~ data['exp_lc'] = ''
                 #~ data['exp_observaciones'] = ''
                 #~ data['exp_peso'] = ''
                 data['exp_referencia'] = shipment.code
-                data['exp_valor_reembolso'] = str(price_ondelivery) if price_ondelivery else '0.1'
                 #~ data['exp_valor_seguro'] = ''
                 #~ data['fr_centro_logistico'] = ''
                 #~ data['fr_almacenar_hasta'] = ''
