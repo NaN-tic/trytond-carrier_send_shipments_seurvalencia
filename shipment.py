@@ -39,7 +39,7 @@ class ShipmentOut:
 
                 notes = ''
                 if shipment.carrier_notes:
-                    notes = CarrierApi.carrier_unaccent(shipment.carrier_notes)
+                    notes = shipment.carrier_notes
 
                 packages = shipment.number_packages
                 if packages == 0:
@@ -68,7 +68,7 @@ class ShipmentOut:
                 #~ data['b2c_test_preaviso'] = ''
                 #~ data['b2c_test_reparto'] = ''
                 #~ data['b2c_turno_reparto'] = ''
-                data['blt_observaciones'] = notes
+                data['blt_observaciones'] = unaccent(notes)
                 data['blt_referencia'] = shipment.code
                 #~ data['cab_producto'] = ''
                 #~ data['cab_servicio'] = ''
@@ -86,7 +86,7 @@ class ShipmentOut:
                 data['csg_telefono'] = unspaces(shipment.delivery_address.phone or shipment.company.party.phone)
                 #~ data['csg_tipo_numero_via'] = ''
                 #~ data['csg_tipo_via'] = ''
-                #~ data['exp_bultos'] = ''
+                data['exp_bultos'] = packages
                 #~ data['exp_cambio'] = ''
                 #~ data['exp_cde'] = ''
                 #~ data['exp_portes'] = 'F'
