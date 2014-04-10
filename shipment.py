@@ -100,7 +100,8 @@ class ShipmentOut:
                 #~ data['exp_entregar_sabado'] = ''
                 #~ data['exp_lc'] = ''
                 #~ data['exp_observaciones'] = ''
-                #~ data['exp_peso'] = ''
+                if api.weight and getattr(shipment, 'weight_func'):
+                    data['exp_peso'] = str(shipment.weight_func)
                 data['exp_referencia'] = shipment.code
                 #~ data['exp_valor_seguro'] = ''
                 #~ data['fr_centro_logistico'] = ''
