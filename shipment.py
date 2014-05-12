@@ -160,6 +160,10 @@ class ShipmentOut:
                         'Generated tmp label %s' % (temp.name))
                     temp.close()
                     labels.append(temp.name)
+                else:
+                    message = 'Not label %s shipment available from Seur.' % (shipment.code)
+                    errors.append(message)
+                    logging.getLogger('seurvalencia').error(message)
 
                 if error:
                     logging.getLogger('seurvalencia').error(
