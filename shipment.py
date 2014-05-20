@@ -46,6 +46,10 @@ class ShipmentOut:
                 if packages == 0:
                     packages = 1
 
+                delivery_name = unaccent(shipment.customer.name)
+                if shipment.delivery_address.name:
+                    delivery_name = unaccent(shipment.delivery_address.name) 
+
                 data = {}
                 #~ data['adn_aduana_destino'] = ''
                 #~ data['adn_aduana_origen'] = ''
@@ -66,7 +70,7 @@ class ShipmentOut:
                 data['blt_referencia'] = shipment.code
                 #~ data['cab_producto'] = ''
                 #~ data['cab_servicio'] = ''
-                data['csg_atencion_de'] = unaccent(shipment.customer.name)
+                data['csg_atencion_de'] = delivery_name
                 #~ data['csg_ccc'] = ''
                 data['csg_codigo_postal'] = shipment.delivery_address.zip
                 #~ data['csg_escalera'] = ''
