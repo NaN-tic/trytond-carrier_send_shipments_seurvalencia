@@ -105,7 +105,10 @@ class ShipmentOut:
                 #~ data['exp_lc'] = ''
                 #~ data['exp_observaciones'] = ''
                 if api.weight and hasattr(shipment, 'weight_func'):
-                    data['exp_peso'] = str(shipment.weight_func)
+                    weight = str(shipment.weight_func)
+                    if weight == '0.0':
+                        weight = '1'
+                    data['exp_peso'] = weight
                 data['exp_referencia'] = shipment.code
                 #~ data['exp_valor_seguro'] = ''
                 #~ data['fr_centro_logistico'] = ''
