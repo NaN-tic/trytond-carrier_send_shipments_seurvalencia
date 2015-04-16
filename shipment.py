@@ -48,7 +48,7 @@ class ShipmentOut:
                     notes = shipment.carrier_notes
 
                 packages = shipment.number_packages
-                if packages == 0:
+                if not packages or packages == 0:
                     packages = 1
 
                 delivery_name = unaccent(shipment.customer.name)
