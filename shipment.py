@@ -43,6 +43,12 @@ class ShipmentOut:
                     logging.getLogger('seur').error(message)
                     continue
 
+                if not shipment.delivery_address.country:
+                    message = 'Add %s a country.' % (shipment.code)
+                    errors.append(message)
+                    logging.getLogger('seur').error(message)
+                    continue
+
                 notes = ''
                 if shipment.carrier_notes:
                     notes = shipment.carrier_notes
