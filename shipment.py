@@ -16,6 +16,19 @@ class ShipmentOut:
     __name__ = 'stock.shipment.out'
 
     @classmethod
+    def __setup__(cls):
+        super(ShipmentOut, cls).__setup__()
+        cls._error_messages.update({
+            'seurval_add_services': 'Select a service or default service in Seur API',
+            'seurval_not_country': 'Add country in shipment "%(name)s" delivery address',
+            'seurval_not_price': 'Shipment "%(name)s" not have price and send '
+                'cashondelivery',
+            'seurval_not_send': 'Not send shipment %(name)s',
+            'seurval_not_send_error': 'Not send shipment %(name)s. %(error)s',
+            'seurval_not_label': 'Not available "%(name)s" label from Seur',
+            })
+
+    @classmethod
     def send_seurvalencia(self, api, shipments):
         '''
         Send shipments out to seurvalencia
@@ -38,15 +51,15 @@ class ShipmentOut:
             for shipment in shipments:
                 service = shipment.carrier_service or default_service
                 if not service:
-                    message = 'Add %s service or configure a default API Seur service.' % (shipment.code)
+                    message = self.raise_user_error('seurval_add_services', {},
+                        raise_exception=False)
                     errors.append(message)
-                    logging.getLogger('seur').error(message)
                     continue
 
                 if not shipment.delivery_address.country:
-                    message = 'Add %s a country.' % (shipment.code)
+                    message = self.raise_user_error('seurval_not_country', {},
+                        raise_exception=False)
                     errors.append(message)
-                    logging.getLogger('seur').error(message)
                     continue
 
                 notes = ''
@@ -102,8 +115,9 @@ class ShipmentOut:
                 if shipment.carrier_cashondelivery:
                     price_ondelivery = ShipmentOut.get_price_ondelivery_shipment_out(shipment)
                     if not price_ondelivery:
-                        message = 'Shipment %s not have price and send ' \
-                                'cashondelivery' % (shipment.code)
+                        message = self.raise_user_error('seurval_not_price', {
+                                'name': shipment.rec_name,
+                                }, raise_exception=False)
                         errors.append(message)
                         continue
                     data['exp_reembolso'] = 'F' # F: Facturacion
@@ -181,14 +195,19 @@ class ShipmentOut:
                     temp.close()
                     labels.append(temp.name)
                 else:
-                    message = 'Not label %s shipment available from Seur.' % (shipment.code)
+                    message = cls.raise_user_error('seurval_not_label', {
+                            'name': shipment.rec_name,
+                            }, raise_exception=False)
                     errors.append(message)
                     logging.getLogger('seurvalencia').error(message)
 
                 if error:
-                    logging.getLogger('seurvalencia').error(
-                        'Not send shipment %s. %s' % (shipment.code, error))
-                    errors.append(shipment.code)
+                    message = self.raise_user_error('seurval_not_send_error', {
+                            'name': shipment.rec_name,
+                            'error': error,
+                            }, raise_exception=False)
+                    logging.getLogger('seurvalencia').error(message)
+                    errors.append(message)
 
         return references, labels, errors
 
