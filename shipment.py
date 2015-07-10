@@ -62,9 +62,17 @@ class ShipmentOut:
                     errors.append(message)
                     continue
 
-                notes = ''
+                if api.reference_origin and hasattr(shipment, 'origin'):
+                    code = shipment.origin and shipment.origin.rec_name or shipment.code
+                else:
+                    code = shipment.code
+
+                if code != shipment.code:
+                    notes = '%s - %s\n' % (code, shipment.code)
+                else:
+                    notes = '%s\n' % (shipment.code)
                 if shipment.carrier_notes:
-                    notes = shipment.carrier_notes
+                    notes += '%s\n' % shipment.carrier_notes
 
                 packages = shipment.number_packages
                 if not packages or packages == 0:
@@ -91,7 +99,7 @@ class ShipmentOut:
                 #~ data['b2c_test_reparto'] = ''
                 #~ data['b2c_turno_reparto'] = ''
                 data['blt_observaciones'] = unaccent(notes)
-                data['blt_referencia'] = shipment.code
+                data['blt_referencia'] = code
                 #~ data['cab_producto'] = ''
                 #~ data['cab_servicio'] = ''
                 data['csg_atencion_de'] = delivery_name
@@ -134,7 +142,7 @@ class ShipmentOut:
                     if weight == '0.0':
                         weight = '1'
                     data['exp_peso'] = weight
-                data['exp_referencia'] = shipment.code
+                data['exp_referencia'] = code
                 #~ data['exp_valor_seguro'] = ''
                 #~ data['fr_centro_logistico'] = ''
                 #~ data['fr_almacenar_hasta'] = ''
@@ -195,7 +203,7 @@ class ShipmentOut:
                     temp.close()
                     labels.append(temp.name)
                 else:
-                    message = cls.raise_user_error('seurval_not_label', {
+                    message = self.raise_user_error('seurval_not_label', {
                             'name': shipment.rec_name,
                             }, raise_exception=False)
                     errors.append(message)
