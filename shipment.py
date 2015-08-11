@@ -11,6 +11,8 @@ import tempfile
 __all__ = ['ShipmentOut']
 __metaclass__ = PoolMeta
 
+logger = logging.getLogger(__name__)
+
 
 class ShipmentOut:
     __name__ = 'stock.shipment.out'
@@ -176,8 +178,7 @@ class ShipmentOut:
                 reference, label, error = picking_api.create(data)
 
                 if not reference:
-                    logging.getLogger('seurvalencia').error(
-                        'Not send shipment %s.' % (shipment.code))
+                    logger.error('Not send shipment %s.' % (shipment.code))
                 if reference:
                     self.write([shipment], {
                         'carrier_tracking_ref': reference,
@@ -186,8 +187,7 @@ class ShipmentOut:
                         'carrier_send_date': ShipmentOut.get_carrier_date(),
                         'carrier_send_employee': ShipmentOut.get_carrier_employee() or None,
                         })
-                    logging.getLogger('seurvalencia').info(
-                        'Send shipment %s' % (shipment.code))
+                    logger.info('Send shipment %s' % (shipment.code))
                     references.append(shipment.code)
 
                 if label:
@@ -195,8 +195,7 @@ class ShipmentOut:
                             prefix='%s-seur-%s-' % (dbname, reference),
                             suffix='.txt', delete=False) as temp:
                         temp.write(label)
-                    logging.getLogger('seur').info(
-                        'Generated tmp label %s' % (temp.name))
+                    logger.info('Generated tmp label %s' % (temp.name))
                     temp.close()
                     labels.append(temp.name)
                 else:
@@ -204,14 +203,14 @@ class ShipmentOut:
                             'name': shipment.rec_name,
                             }, raise_exception=False)
                     errors.append(message)
-                    logging.getLogger('seurvalencia').error(message)
+                    logger.error(message)
 
                 if error:
                     message = self.raise_user_error('seurval_not_send_error', {
                             'name': shipment.rec_name,
                             'error': error,
                             }, raise_exception=False)
-                    logging.getLogger('seurvalencia').error(message)
+                    logger.error(message)
                     errors.append(message)
 
         return references, labels, errors
