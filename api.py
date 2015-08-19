@@ -1,9 +1,8 @@
-# This file is part of the carrier_send_shipments module for Tryton.
+# This file is part of the carrier_send_shipments_seurvalencia module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import fields
 from trytond.pool import PoolMeta
-from trytond.pyson import Eval
+from trytond.pyson import Eval, Not, Equal
 import logging
 
 try:
@@ -30,6 +29,13 @@ class CarrierApi:
         res.append(('seurvalencia', 'Seur Valencia'))
         return res
 
+    @classmethod
+    def view_attributes(cls):
+        return super(CarrierApi, cls).view_attributes() + [
+            ('//page[@id="seurvalencia"]', 'state', {
+                    'invisible': Not(Equal(Eval('method'), 'seurvalencia')),
+                    })]
+
     def test_seurvalencia(self, api):
         '''
         Test Seur Valencia connection
@@ -37,7 +43,6 @@ class CarrierApi:
         '''
         message = 'Connection unknown result'
         
-        seurvalencia_context = {}
         with API(api.username, api.password, api.debug) as seurvalencia_api:
             message = seurvalencia_api.test_connection()
         self.raise_user_error(message)
