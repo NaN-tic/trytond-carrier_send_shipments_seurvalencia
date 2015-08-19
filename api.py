@@ -32,7 +32,7 @@ class CarrierApi:
     @classmethod
     def view_attributes(cls):
         return super(CarrierApi, cls).view_attributes() + [
-            ('//page[@id="seurvalencia"]', 'state', {
+            ('//page[@id="seurvalencia"]', 'states', {
                     'invisible': Not(Equal(Eval('method'), 'seurvalencia')),
                     })]
 
