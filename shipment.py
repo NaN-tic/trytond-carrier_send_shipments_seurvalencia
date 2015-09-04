@@ -41,6 +41,7 @@ class ShipmentOut:
         pool = Pool()
         CarrierApi = pool.get('carrier.api')
         ShipmentOut = pool.get('stock.shipment.out')
+        Uom = pool.get('product.uom')
 
         references = []
         labels = []
@@ -136,11 +137,20 @@ class ShipmentOut:
                 #~ data['exp_entregar_sabado'] = ''
                 #~ data['exp_lc'] = ''
                 #~ data['exp_observaciones'] = ''
+
                 if api.weight and hasattr(shipment, 'weight_func'):
-                    weight = str(shipment.weight_func)
-                    if weight == '0.0':
-                        weight = '1'
-                    data['exp_peso'] = weight
+                    weight = shipment.weight_func
+                    if weight == 0:
+                        weight = 1
+                    if api.weight_api_unit:
+                        if shipment.weight_uom:
+                            weight = Uom.compute_qty(
+                                shipment.weight_uom, weight, api.weight_api_unit)
+                        elif api.weight_unit:
+                            weight = Uom.compute_qty(
+                                api.weight_unit, weight, api.weight_api_unit)
+                    data['exp_peso'] = str(weight)
+
                 data['exp_referencia'] = code
                 #~ data['exp_valor_seguro'] = ''
                 #~ data['fr_centro_logistico'] = ''
