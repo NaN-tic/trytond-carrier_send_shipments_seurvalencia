@@ -14,7 +14,7 @@ class CarrierManifest:
     __name__ = 'carrier.manifest'
 
     def get_manifest_seurvalencia(self, api, from_date, to_date):
-        dbname = Transaction().cursor.dbname
+        dbname = Transaction().database.name
 
         with Picking(api.username, api.password, api.debug) as picking_api:
             manifest_file = picking_api.info()

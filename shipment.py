@@ -48,7 +48,7 @@ class ShipmentOut:
         errors = []
 
         default_service = CarrierApi.get_default_carrier_service(api)
-        dbname = Transaction().cursor.dbname
+        dbname = Transaction().database.name
 
         with Picking(api.username, api.password, api.debug) as picking_api:
             for shipment in shipments:
