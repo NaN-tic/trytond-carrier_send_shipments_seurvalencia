@@ -50,7 +50,8 @@ class ShipmentOut:
         default_service = CarrierApi.get_default_carrier_service(api)
         dbname = Transaction().database.name
 
-        with Picking(api.username, api.password, api.debug) as picking_api:
+        with Picking(api.username, api.password, timeout=api.timeout,
+                debug=api.debug) as picking_api:
             for shipment in shipments:
                 service = shipment.carrier_service or shipment.carrier.service or default_service
                 if not service:
@@ -80,7 +81,7 @@ class ShipmentOut:
 
                 delivery_name = unaccent(shipment.customer.name)
                 if shipment.delivery_address.name:
-                    delivery_name = unaccent(shipment.delivery_address.name) 
+                    delivery_name = unaccent(shipment.delivery_address.name)
 
                 data = {}
                 #~ data['adn_aduana_destino'] = ''
