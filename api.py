@@ -9,7 +9,7 @@ try:
     from seurvalencia.picking import *
 except ImportError:
     logger = logging.getLogger(__name__)
-    message = 'Install Seur from Pypi: pip install seurvalencia'
+    message = 'Install Seur: pip install seurvalencia'
     logger.error(message)
     raise Exception(message)
 
@@ -22,9 +22,7 @@ class CarrierApi:
 
     @classmethod
     def get_carrier_app(cls):
-        '''
-        Add Carrier Seur APP
-        '''
+        'Add Carrier Seur APP'
         res = super(CarrierApi, cls).get_carrier_app()
         res.append(('seurvalencia', 'Seur Valencia'))
         return res
@@ -36,13 +34,11 @@ class CarrierApi:
                     'invisible': Not(Equal(Eval('method'), 'seurvalencia')),
                     })]
 
-    def test_seurvalencia(self, api):
-        '''
-        Test Seur Valencia connection
-        :param api: obj
-        '''
+    @classmethod
+    def test_seurvalencia(cls, api):
+        'Test Seur Valencia connection'
         message = 'Connection unknown result'
-        
+
         with API(api.username, api.password, api.debug) as seurvalencia_api:
             message = seurvalencia_api.test_connection()
-        self.raise_user_error(message)
+        cls.raise_user_error(message)
