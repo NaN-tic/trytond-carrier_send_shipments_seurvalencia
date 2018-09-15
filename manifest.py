@@ -9,8 +9,7 @@ from base64 import decodestring
 __all__ = ['CarrierManifest']
 
 
-class CarrierManifest:
-    __metaclass__ = PoolMeta
+class CarrierManifest(metaclass=PoolMeta):
     __name__ = 'carrier.manifest'
 
     def get_manifest_seurvalencia(self, api, from_date, to_date):

@@ -1,23 +1,15 @@
 # This file is part of the carrier_send_shipments_seurvalencia module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
+import logging
 from trytond.pool import PoolMeta
 from trytond.pyson import Eval, Not, Equal
-import logging
-
-try:
-    from seurvalencia.picking import *
-except ImportError:
-    logger = logging.getLogger(__name__)
-    message = 'Install Seur: pip install seurvalencia'
-    logger.error(message)
-    raise Exception(message)
+from seurvalencia.picking import *
 
 __all__ = ['CarrierApi']
 
 
-class CarrierApi:
-    __metaclass__ = PoolMeta
+class CarrierApi(metaclass=PoolMeta):
     __name__ = 'carrier.api'
 
     @classmethod
