@@ -112,7 +112,7 @@ class ShipmentOut:
                 #~ data['csg_piso'] = ''
                 data['csg_poblacion'] = unaccent(shipment.delivery_address.city)
                 #~ data['csg_puerta'] = ''
-                data['csg_telefono'] = unspaces(ShipmentOut.get_phone_shipment_out(shipment))
+                data['csg_telefono'] = unspaces(shipment.mobile or shipment.phone)
                 #~ data['csg_tipo_numero_via'] = ''
                 #~ data['csg_tipo_via'] = ''
                 data['exp_bultos'] = packages
