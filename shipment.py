@@ -3,6 +3,8 @@
 # the full copyright notices and license terms.
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 from seurvalencia.picking import Picking
 from trytond.modules.carrier_send_shipments.tools import unaccent, unspaces
 import logging
@@ -15,17 +17,6 @@ logger = logging.getLogger(__name__)
 
 class ShipmentOut(metaclass=PoolMeta):
     __name__ = 'stock.shipment.out'
-
-    @classmethod
-    def __setup__(cls):
-        super(ShipmentOut, cls).__setup__()
-        cls._error_messages.update({
-            'seurval_add_services': 'Select a service or default service in Seur API',
-            'seurval_not_country': 'Add country in shipment "%(name)s" delivery address',
-            'seurval_not_send': 'Not send shipment %(name)s',
-            'seurval_not_send_error': 'Not send shipment %(name)s. %(error)s',
-            'seurval_not_label': 'Not available "%(name)s" label from Seur',
-            })
 
     @classmethod
     def send_seurvalencia(self, api, shipments):
@@ -52,14 +43,16 @@ class ShipmentOut(metaclass=PoolMeta):
             for shipment in shipments:
                 service = shipment.carrier_service or shipment.carrier.service or default_service
                 if not service:
-                    message = self.raise_user_error('seurval_add_services', {},
-                        raise_exception=False)
+                    message = gettext(
+                        'carrier_send_shipments_seurvalencia.msg_add_services',
+                        message=message)
                     errors.append(message)
                     continue
 
                 if not shipment.delivery_address.country:
-                    message = self.raise_user_error('seurval_not_country', {},
-                        raise_exception=False)
+                    message = gettext(
+                        'carrier_send_shipments_seurvalencia.msg_not_country',
+                        message=message)
                     errors.append(message)
                     continue
 
@@ -201,17 +194,15 @@ class ShipmentOut(metaclass=PoolMeta):
                     temp.close()
                     labels.append(temp.name)
                 else:
-                    message = self.raise_user_error('seurval_not_label', {
-                            'name': shipment.rec_name,
-                            }, raise_exception=False)
+                    message = gettext('carrier_send_shipments_mrw.msg_not_label',
+                            name=shipment.rec_name)
                     errors.append(message)
                     logger.error(message)
 
                 if error:
-                    message = self.raise_user_error('seurval_not_send_error', {
-                            'name': shipment.rec_name,
-                            'error': error,
-                            }, raise_exception=False)
+                    message = gettext('carrier_send_shipments_mrw.msg_not_send_error',
+                            name=shipment.rec_name,
+                            error=error)
                     logger.error(message)
                     errors.append(message)
 

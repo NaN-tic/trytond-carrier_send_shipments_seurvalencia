@@ -4,6 +4,8 @@
 import logging
 from trytond.pool import PoolMeta
 from trytond.pyson import Eval, Not, Equal
+from trytond.i18n import gettext
+from trytond.exceptions import UserError
 from seurvalencia.picking import *
 
 __all__ = ['CarrierApi']
@@ -33,4 +35,6 @@ class CarrierApi(metaclass=PoolMeta):
 
         with API(api.username, api.password, api.debug) as seurvalencia_api:
             message = seurvalencia_api.test_connection()
-        cls.raise_user_error(message)
+            raise UserError(gettext(
+                    'carrier_send_shipments_seurvalencia.msg_test_connection',
+                    message=message))
