@@ -57,9 +57,9 @@ class ShipmentOut(metaclass=PoolMeta):
                     continue
 
                 if api.reference_origin and hasattr(shipment, 'origin'):
-                    code = shipment.origin and shipment.origin.rec_name or shipment.code
+                    code = shipment.origin and shipment.origin.rec_name or shipment.number
                 else:
-                    code = shipment.code
+                    code = shipment.number
 
                 notes = ''
                 if shipment.carrier_notes:
@@ -104,7 +104,7 @@ class ShipmentOut(metaclass=PoolMeta):
                 #~ data['csg_piso'] = ''
                 data['csg_poblacion'] = unaccent(shipment.delivery_address.city)
                 #~ data['csg_puerta'] = ''
-                data['csg_telefono'] = unspaces(shipment.mobile or shipment.phone)
+                data['csg_telefono'] = unspaces(shipment.customer.mobile or shipment.customer.phone)
                 #~ data['csg_tipo_numero_via'] = ''
                 #~ data['csg_tipo_via'] = ''
                 data['exp_bultos'] = packages
@@ -173,7 +173,7 @@ class ShipmentOut(metaclass=PoolMeta):
                 reference, label, error = picking_api.create(data)
 
                 if not reference:
-                    logger.error('Not send shipment %s.' % (shipment.code))
+                    logger.error('Not send shipment %s.' % (shipment.number))
                 if reference:
                     self.write([shipment], {
                         'carrier_tracking_ref': reference,
@@ -182,8 +182,8 @@ class ShipmentOut(metaclass=PoolMeta):
                         'carrier_send_date': ShipmentOut.get_carrier_date(),
                         'carrier_send_employee': ShipmentOut.get_carrier_employee() or None,
                         })
-                    logger.info('Send shipment %s' % (shipment.code))
-                    references.append(shipment.code)
+                    logger.info('Send shipment %s' % (shipment.number))
+                    references.append(shipment.number)
 
                 if label:
                     with tempfile.NamedTemporaryFile(
@@ -194,13 +194,13 @@ class ShipmentOut(metaclass=PoolMeta):
                     temp.close()
                     labels.append(temp.name)
                 else:
-                    message = gettext('carrier_send_shipments_mrw.msg_not_label',
+                    message = gettext('carrier_send_shipments_seurvalencia.msg_not_label',
                             name=shipment.rec_name)
                     errors.append(message)
                     logger.error(message)
 
                 if error:
-                    message = gettext('carrier_send_shipments_mrw.msg_not_send_error',
+                    message = gettext('carrier_send_shipments_seurvalencia.msg_not_send_error',
                             name=shipment.rec_name,
                             error=error)
                     logger.error(message)
